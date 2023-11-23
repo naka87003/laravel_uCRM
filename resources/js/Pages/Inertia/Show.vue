@@ -1,9 +1,9 @@
 <script setup>
-import { Inertia } from '@inertiajs/inertia'
+import { router } from '@inertiajs/vue3'
 defineProps({ id: String, blog: Object })
 const deleteConfirm = id => {
   // JSのテンプレート構文 バックスラッシュで囲む 変数箇所を${}で囲む
-  Inertia.delete(`/inertia/${id}`, {
+  router.delete(`/inertia/${id}`, {
     onBefore: () => confirm('本当に削除しますか?')
   })
 }

@@ -4,34 +4,38 @@ import { Head } from '@inertiajs/vue3';
 import { ref } from 'vue'
 import { router } from '@inertiajs/vue3'
 import InputError from '@/Components/InputError.vue';
-import { Core as YubinBangoCore } from "yubinbango-core2";
 
 const props = defineProps({
+  customer: Object,
   errors: Object
 });
+
 const form = ref({
-  name: null, kana: null, tel: null, email: null, postcode: null,
-  address: null, birthday: null, gender: '2', memo: null
+  id: props.customer.id,
+  name: props.customer.name,
+  kana: props.customer.kana,
+  tel: props.customer.tel,
+  email: props.customer.email,
+  postcode: props.customer.postcode,
+  address: props.customer.address,
+  birthday: props.customer.birthday,
+  gender: props.customer.gender,
+  memo: props.customer.memo,
 });
-const storeCustomer = () => {
-  router.post('/customers', form.value)
+
+const updateCustomer = id => {
+  router.put(route('customers.update', { customer: id }), form.value)
 };
-// 数字を文字に変換 第１引数が郵便番号、第２がコールバックで引数に住所
-const fetchAddress = () => {
-  new YubinBangoCore(String(form.value.postcode), (value) => {
-    form.value.address = value.region + value.locality + value.street
-  })
-}
 </script>
 
 <template>
-  <Head title="顧客登録" />
+  <Head title="顧客編集" />
   <AuthenticatedLayout>
     <template #header>
-      <h2 class="font-semibold text-xl text-gray-800 leading-tight">顧客登録</h2>
+      <h2 class="font-semibold text-xl text-gray-800 leading-tight">顧客編集</h2>
     </template>
     <section class="text-gray-600 body-font relative">
-      <form @submit.prevent="storeCustomer">
+      <form @submit.prevent="updateCustomer(form.id)">
         <div class="container px-5 py-8 mx-auto">
           <div class="lg:w-1/2 md:w-2/3 mx-auto">
             <div class="flex flex-wrap -m-2">
@@ -115,7 +119,7 @@ const fetchAddress = () => {
               </div>
               <div class="p-2 w-full">
                 <button
-                  class="flex mx-auto text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg">顧客登録</button>
+                  class="flex mx-auto text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg">更新</button>
               </div>
             </div>
           </div>

@@ -1,6 +1,6 @@
 <script setup>
 import { reactive } from 'vue'
-import { Inertia } from '@inertiajs/inertia'
+import { router } from '@inertiajs/vue3'
 
 defineProps({
   errors: Object
@@ -11,7 +11,7 @@ const form = reactive({
   content: null
 })
 const submitFunction = () => {
-  Inertia.post('/inertia', form)
+  router.post('/inertia', form)
 }
 </script>
 <template>

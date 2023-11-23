@@ -2,7 +2,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import { ref } from 'vue'
-import { Inertia } from '@inertiajs/inertia'
+import { router } from '@inertiajs/vue3'
 import InputError from '@/Components/InputError.vue';
 
 const props = defineProps({
@@ -14,7 +14,7 @@ const form = ref({
   price: null
 });
 const storeItem = () => {
-  Inertia.post('/items', form.value)
+  router.post('/items', form.value)
 };
 </script>
 

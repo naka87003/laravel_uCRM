@@ -4,13 +4,13 @@ import { Head, Link } from '@inertiajs/vue3';
 import FlashMessage from '@/Components/FlashMessage.vue';
 import Pagination from '@/Components/Pagination.vue'
 import { ref } from 'vue'
-import { Inertia } from '@inertiajs/inertia';
+import { router } from '@inertiajs/vue3';
 const props = defineProps({ customers: Object })
 
 const search = ref('');
 
 const searchCustomers = () => {
-  Inertia.get(route('customers.index', { search: search.value }))
+  router.get(route('customers.index', { search: search.value }))
 }
 </script>
 
@@ -51,7 +51,11 @@ const searchCustomers = () => {
                     </thead>
                     <tbody>
                       <tr v-for="customer in props.customers.data" :key="customer.id">
-                        <td class="border-t-2 border-gray-200 px-4 py-3"> {{ customer.id }}</td>
+                        <td class="border-t-2 border-gray-200 px-4 py-3">
+                          <Link class="text-blue-400" :href="route('customers.show', { customer: customer.id })">
+                          {{ customer.id }}
+                          </Link>
+                        </td>
                         <td class="border-t-2 border-gray-200 px-4 py-3">{{ customer.name }}</td>
                         <td class="border-t-2 border-gray-200 px-4 py-3">{{ customer.kana }}</td>
                         <td class="border-t-2 border-gray-200 px-4 py-3">{{ customer.tel }}</td>

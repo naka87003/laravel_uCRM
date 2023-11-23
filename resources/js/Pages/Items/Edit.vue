@@ -2,7 +2,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import { ref } from 'vue'
-import { Inertia } from '@inertiajs/inertia'
+import { router } from '@inertiajs/vue3'
 import InputError from '@/Components/InputError.vue';
 
 const props = defineProps({
@@ -18,7 +18,7 @@ const form = ref({
   is_selling: props.item.is_selling
 })
 const updateItem = id => {
-  Inertia.put(route('items.update', { item: id }), form.value)
+  router.put(route('items.update', { item: id }), form.value)
 };
 </script>
 
