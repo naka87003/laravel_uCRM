@@ -94,15 +94,13 @@ const fetchAddress = () => {
               </div>
               <div class="p-2 w-full">
                 <div class="relative">
-                  <label class="leading-7 text-sm text-gray-600">性別</label>
-                  <div>
-                    <input id="gender_0" type="radio" name="gender" v-model="form.gender" value="0">
-                    <label for="gender_0" class="mr-2">男性</label>
-                    <input id="gender_1" type="radio" name="gender" v-model="form.gender" value="1">
-                    <label for="gender_1" class="mr-2">女性</label>
-                    <input id="gender_2" type="radio" name="gender" v-model="form.gender" value="2">
-                    <label for="gender_2" class="mr-2">非公開</label>
-                  </div>
+                  <label for="gender" class="block leading-7 text-sm text-gray-600">性別</label>
+                  <select v-model="form.gender" id="gender"
+                    class="rounded border appearance-none border-gray-300 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500 text-base pl-3 pr-10">
+                    <option value="0">男性</option>
+                    <option value="1">女性</option>
+                    <option value="2">非公開</option>
+                  </select>
                 </div>
               </div>
               <div class="p-2 w-full">
