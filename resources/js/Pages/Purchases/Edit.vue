@@ -1,22 +1,17 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
-import { getToday } from '@/common' // 別ファイルをインポート
+import { Head, router } from '@inertiajs/vue3';
 import { ref, onMounted, computed } from 'vue'
-import { router } from '@inertiajs/vue3'
 import InputError from '@/Components/InputError.vue';
-import MicorModal from '@/Components/MicroModal.vue';
+import dayjs from 'dayjs'
 
-const props = defineProps({
-  errors: Object,
-  customers: Object,
-  items: Object,
-});
+const props = defineProps({ 'items': Object, 'order': Object, 'errors': Object, });
 
 const form = ref({
-  date: null,
-  customer_id: null,
-  status: true,
+  id: props.order[0].id,
+  date: dayjs(props.order[0].created_at).format("YYYY-MM-DD"),
+  customer_id: props.order[0].customer_id,
+  status: props.order[0].status,
   items: []
 });
 
@@ -25,13 +20,12 @@ const itemList = ref([]);
 const quantity = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]; // option用
 
 onMounted(() => { // ページ読み込み後 即座に実行
-  form.value.date = getToday();
   props.items.forEach(item => { // 配列を1つずつ処理
     itemList.value.push({ // 配列に1つずつ追加
       id: item.id,
       name: item.name,
       price: item.price,
-      quantity: 0
+      quantity: item.quantity
     })
   });
 });
@@ -44,17 +38,15 @@ const totalPrice = computed(() => {
   return total;
 });
 
-const storePurchase = () => {
+const updatePurchase = id => {
   itemList.value.forEach(item => {
-    if (item.quantity > 0) // 0より大きいものだけ追加
+    if (item.quantity > 0) {
       form.value.items.push({ id: item.id, quantity: item.quantity });
+    }
   })
-  router.post(route('purchases.store'), form.value);
+  router.put(route('purchases.update', { purchase: id }), form.value)
 }
 
-const setCustomerId = id => {
-  form.value.customer_id = id;
-};
 </script>
 
 <template>
@@ -64,26 +56,17 @@ const setCustomerId = id => {
       <h2 class="font-semibold text-xl text-gray-800 leading-tight">購入画面</h2>
     </template>
     <section class="text-gray-600 body-font relative">
-      <form @submit.prevent="storePurchase">
+      <form @submit.prevent="updatePurchase(form.id)">
         <div class="container px-5 py-8 mx-auto">
           <div class="lg:w-1/2 md:w-2/3 mx-auto">
             <div class="flex flex-wrap -m-2">
               <div class="p-2 w-1/2">
                 <div class="relative">
                   <label for="" class="block leading-7 text-sm text-gray-600">会員名</label>
-                  <select name="customer" v-model="form.customer_id" id="customer"
+                  <div name="customer" id="customer"
                     class="w-full rounded border appearance-none border-gray-300 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500 text-base pl-3 pr-10">
-                    <option v-for="customer in props.customers" :value="customer.id" :key="customer.id">
-                      {{ customer.id }} : {{ customer.name }}
-                    </option>
-                  </select>
-                  <InputError :message="props.errors.customer_id" />
-                </div>
-              </div>
-              <div class="p-2 w-1/2">
-                <div class="relative">
-                  <label for="customer" class="block leading-7 text-sm text-gray-600">会員検索</label>
-                  <MicorModal @update:customerId="setCustomerId" />
+                    {{ props.order[0].customer_id }} : {{ props.order[0].customer_name }}
+                  </div>
                 </div>
               </div>
               <div class="p-2 w-1/2">
@@ -144,11 +127,21 @@ const setCustomerId = id => {
                         {{ totalPrice.toLocaleString() }} 円</div>
                     </div>
                   </div>
+                  <div class="p-2 w-full">
+                    <div class="relative">
+                      <label for="status" class="block leading-7 text-sm text-gray-600">ステータス</label>
+                      <select v-model="form.status" id="status"
+                        class="rounded border appearance-none border-gray-300 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500 text-base pl-3 pr-10">
+                        <option value="1">未キャンセル</option>
+                        <option value="0">キャンセル済み</option>
+                      </select>
+                    </div>
+                  </div>
                 </div>
               </div>
               <div class="p-2 w-full">
                 <button
-                  class="flex mx-auto text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg">登録する</button>
+                  class="flex mx-auto text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg">更新する</button>
               </div>
             </div>
           </div>
