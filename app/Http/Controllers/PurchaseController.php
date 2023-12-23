@@ -9,6 +9,7 @@ use Inertia\Inertia;
 use App\Models\Customer;
 use App\Models\Item;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 
 use App\Models\Order;
 
@@ -19,14 +20,29 @@ class PurchaseController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $orders = Order::groupBy('id')
+        $orders = Order::searchCustomers($request->customerName)->betweenDate($request->startDate, $request->endDate)->groupBy('id')
             ->selectRaw('id, customer_name, sum(subtotal) as total, status, created_at')
             ->paginate(50);
         return Inertia::render('Purchases/Index', [
-            'orders' => $orders
+            'orders' => $orders,
+            'customerName' => $request->customerName,
+            'startDate' => $request->startDate,
+            'endDate' => $request->endDate
         ]);
+    }
+
+    /**
+     * 条件で絞り込み
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function search(Request $request)
+    {
+        $orders = Order::searchCustomers($request->customerName)->betweenDate($request->startDate, $request->endDate)->groupBy('id')
+            ->selectRaw('id, customer_name, sum(subtotal) as total, status, created_at')
+            ->paginate(50);
+        return response()->json($orders);
     }
 
     /**
