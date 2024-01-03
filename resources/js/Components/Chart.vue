@@ -22,5 +22,5 @@ const barData = ref({
 </script>
 
 <template>
-  <BarChart :chartData="barData" :height="200"/>
+  <BarChart :chartData="barData" :height="250"/>
 </template>

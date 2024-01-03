@@ -15,6 +15,9 @@ const form = ref({
   startDate: null,
   endDate: null,
   type: 'perDay',
+  rfmPrms: [
+    14, 28, 60, 90, 7, 5, 3, 2, 300000, 200000, 100000, 30000
+  ],
 });
 
 const data = ref({});
@@ -24,11 +27,13 @@ const getData = async () => {
     params: {
       startDate: form.value.startDate,
       endDate: form.value.endDate,
-      type: form.value.type
+      type: form.value.type,
+      rfmPrms: form.value.rfmPrms
     }
   })
     .then(res => {
       data.value = res.data;
+      console.log(res.data)
     })
     .catch(error => {
       console.log(error);
@@ -76,9 +81,48 @@ const getData = async () => {
                             <option value="perMonth">月別</option>
                             <option value="perYear">年別</option>
                             <option value="decile">デシル分析</option>
+                            <option value="rfm">RFM分析</option>
                           </select>
                         </div>
                       </div>
+                    </div>
+                    <div v-if="form.type === 'rfm'">
+                      <table class="mx-auto">
+                        <thead>
+                          <tr>
+                            <th>ランク</th>
+                            <th>R (○日以内)</th>
+                            <th>F (○回以上)</th>
+                            <th>M (○円以上)</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>5</td>
+                            <td><input type="number" v-model="form.rfmPrms[0]"></td>
+                            <td><input type="number" v-model="form.rfmPrms[4]"></td>
+                            <td><input type="number" v-model="form.rfmPrms[8]"></td>
+                          </tr>
+                          <tr>
+                            <td>4</td>
+                            <td><input type="number" v-model="form.rfmPrms[1]"></td>
+                            <td><input type="number" v-model="form.rfmPrms[5]"></td>
+                            <td><input type="number" v-model="form.rfmPrms[9]"></td>
+                          </tr>
+                          <tr>
+                            <td>3</td>
+                            <td><input type="number" v-model="form.rfmPrms[2]"></td>
+                            <td><input type="number" v-model="form.rfmPrms[6]"></td>
+                            <td><input type="number" v-model="form.rfmPrms[10]"></td>
+                          </tr>
+                          <tr>
+                            <td>2</td>
+                            <td><input type="number" v-model="form.rfmPrms[3]"></td>
+                            <td><input type="number" v-model="form.rfmPrms[7]"></td>
+                            <td><input type="number" v-model="form.rfmPrms[11]"></td>
+                          </tr>
+                        </tbody>
+                      </table>
                     </div>
                     <button
                       class="flex ml-auto mt-3 mb-3 text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded"
@@ -86,7 +130,9 @@ const getData = async () => {
                   </div>
                 </div>
                 <div v-show="data.data" class="lg:w-2/3 w-full mx-auto overflow-auto">
-                  <Chart :data="data" />
+                  <div v-if="data.type != 'rfm'">
+                    <Chart :data="data" />
+                  </div>
                   <ResultTable :data="data" />
                 </div>
               </div>
